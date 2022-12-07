@@ -5,18 +5,13 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class Util {
-    private final String url = "jdbc:mysql://localhost:3306/mytestbd";
-    private final String user = "root";
-    private final String password = "1290";
-    private Connection connection;
+    private static final String url = "jdbc:mysql://localhost:3306/mytestbd";
+    private static final String user = "root";
+    private static final String password = "1290";
 
-    public Connection getConnection() {
-        return connection;
-    }
-
-    public Util() {
+    public static  Connection getConnection() {
         try {
-            connection = DriverManager.getConnection(url, user, password);
+            return DriverManager.getConnection(url, user, password);
         } catch (SQLException e) {
             throw new RuntimeException();
         }
