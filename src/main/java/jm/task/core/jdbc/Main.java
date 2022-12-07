@@ -6,12 +6,12 @@ import jm.task.core.jdbc.service.UserServiceImpl;
 public class Main {
     public static void main(String[] args) {
         UserService userService = new UserServiceImpl();
-        userService.dropUsersTable();
         userService.createUsersTable();
         for (int i = 0; i < 4; i++) {
             userService.saveUser("a", "b", (byte) 1);
             System.out.printf("User с именем – %s добавлен в базу данных\n", "a");
         }
+        System.out.println(userService.getAllUsers().toString());
         userService.cleanUsersTable();
         userService.dropUsersTable();
         // Создание таблицы User(ов)
