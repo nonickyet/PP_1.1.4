@@ -5,6 +5,7 @@ import jm.task.core.jdbc.util.Util;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class UserDaoJDBCImpl implements UserDao {
@@ -19,7 +20,12 @@ public class UserDaoJDBCImpl implements UserDao {
                       `age` INT NOT NULL,
                       PRIMARY KEY (`id`));
                     """)) {
-            statement.executeUpdate();
+            Savepoint savepoint = connection.setSavepoint();
+            try {
+                statement.executeUpdate();
+            } catch (SQLException e) {
+                connection.rollback(savepoint);
+            }
             connection.commit();
         } catch (SQLException e) {
         }
@@ -28,7 +34,13 @@ public class UserDaoJDBCImpl implements UserDao {
     public void dropUsersTable() {
         try (Connection connection = Util.getConnection();
              PreparedStatement statement = connection.prepareStatement("drop table `mytestbd`.`user`;")) {
-            statement.executeUpdate();
+            Savepoint savepoint = connection.setSavepoint();
+            try {
+                statement.executeUpdate();
+            } catch (SQLException e) {
+                connection.rollback(savepoint);
+            }
+            connection.commit();
         } catch (SQLException e) {
         }
     }
@@ -39,10 +51,15 @@ public class UserDaoJDBCImpl implements UserDao {
             statement.setString(1, name);
             statement.setString(2, lastName);
             statement.setInt(3, age);
-            statement.executeUpdate();
+            Savepoint savepoint = connection.setSavepoint();
+            try {
+                statement.executeUpdate();
+            } catch (SQLException e) {
+                connection.rollback(savepoint);
+            }
             connection.commit();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.out.println(Arrays.toString(e.getStackTrace()));
         }
     }
 
@@ -51,11 +68,15 @@ public class UserDaoJDBCImpl implements UserDao {
              PreparedStatement statement =
                      connection.prepareStatement("DELETE from user WHERE id IN (?);")) {
             statement.setInt(1, (int) id);
-            statement.executeUpdate();
+            Savepoint savepoint = connection.setSavepoint();
+            try {
+                statement.executeUpdate();
+            } catch (SQLException e) {
+                connection.rollback(savepoint);
+            }
             connection.commit();
         } catch (SQLException e) {
-            System.out.println("here");
-            throw new RuntimeException(e);
+            System.out.println(Arrays.toString(e.getStackTrace()));
         }
     }
 
@@ -70,8 +91,9 @@ public class UserDaoJDBCImpl implements UserDao {
             }
             return result;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.out.println(Arrays.toString(e.getStackTrace()));
         }
+        return new ArrayList<>();
     }
 
     public void cleanUsersTable() {
@@ -80,7 +102,7 @@ public class UserDaoJDBCImpl implements UserDao {
             statement.executeUpdate();
             connection.commit();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.out.println(Arrays.toString(e.getStackTrace()));
         }
     }
 }
