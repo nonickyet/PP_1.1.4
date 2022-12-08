@@ -23,6 +23,7 @@ public class UserDaoJDBCImpl implements UserDao {
             statement.executeUpdate();
             connection.commit();
         } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -32,6 +33,7 @@ public class UserDaoJDBCImpl implements UserDao {
             statement.executeUpdate();
             connection.commit();
         } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -49,7 +51,7 @@ public class UserDaoJDBCImpl implements UserDao {
             }
             connection.commit();
         } catch (SQLException e) {
-            System.out.println(Arrays.toString(e.getStackTrace()));
+            e.printStackTrace();
         }
     }
 
@@ -66,7 +68,7 @@ public class UserDaoJDBCImpl implements UserDao {
             }
             connection.commit();
         } catch (SQLException e) {
-            System.out.println(Arrays.toString(e.getStackTrace()));
+            e.printStackTrace();
         }
     }
 
@@ -81,7 +83,7 @@ public class UserDaoJDBCImpl implements UserDao {
             }
             return result;
         } catch (SQLException e) {
-            System.out.println(Arrays.toString(e.getStackTrace()));
+            e.printStackTrace();
         }
         return new ArrayList<>();
     }
@@ -92,7 +94,7 @@ public class UserDaoJDBCImpl implements UserDao {
             statement.executeUpdate();
             connection.commit();
         } catch (SQLException e) {
-            System.out.println(Arrays.toString(e.getStackTrace()));
+            e.printStackTrace();
         }
     }
 }

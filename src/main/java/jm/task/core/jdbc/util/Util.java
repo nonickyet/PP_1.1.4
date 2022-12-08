@@ -1,9 +1,11 @@
 package jm.task.core.jdbc.util;
 
-import org.hibernate.Session;
+import jm.task.core.jdbc.model.User;
 import org.hibernate.SessionFactory;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.service.ServiceRegistry;
 
-import java.lang.module.Configuration;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -13,6 +15,8 @@ public class Util {
     private static final String url = "jdbc:mysql://localhost:3306/mytestbd";
     private static final String user = "root";
     private static final String password = "1290";
+
+    private static SessionFactory sessionFactory;
 
     public static Connection getConnection() {
         try {
@@ -24,40 +28,26 @@ public class Util {
         }
     }
 
-//    public static Session getSessionFactory() {
-//        try {
-//            Properties prop = new Properties();
-//            prop.setProperty("hibernate.connection.url", url);
-//            prop.setProperty("dialect", "org.hibernate.dialect.MySQL8Dialect");
-//            prop.setProperty("hibernate.connection.username", user);
-//            prop.setProperty("hibernate.connection.password", password);
-//            prop.setProperty("hibernate.connection.driver_class", "org.postgresql.Driver");
-//            SessionFactory sessionFactory = new Configuration().addProperties(prop).buildSessionFactory();
-//            return sessionFactory.openSession();
-//        } catch (Exception x) {
-//            throw x;
-//        }
-//    }
+    public static SessionFactory getSessionFactory() {
+        if (sessionFactory == null) {
+            try {
+                Configuration cfg = new Configuration();
+                Properties prop = new Properties();
+                prop.put("hibernate.connection.url", url);
+                prop.setProperty("dialect", "org.hibernate.dialect.MySQL8Dialect");
+                prop.setProperty("hibernate.connection.username", user);
+                prop.setProperty("hibernate.connection.password", password);
+                prop.setProperty("hibernate.hbm2ddl.auto", "create");
+                prop.setProperty("hibernate.enable_lazy_load_no_trans", "true");
+                cfg.addAnnotatedClass(User.class);
+                cfg.setProperties(prop);
+                ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
+                        .applySettings(cfg.getProperties()).build();
+                return sessionFactory = cfg.buildSessionFactory(serviceRegistry);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return sessionFactory;
+    }
 }
-//Properties prop= new Properties();
-//
-//        prop.setProperty("hibernate.connection.url", "jdbc:mysql://localhost:3306/mytestbd);
-//
-//        //You can use any database you want, I had it configured for Postgres
-//        prop.setProperty("dialect", "org.hibernate.dialect.");
-//
-//        prop.setProperty("hibernate.connection.username", "<your-user>");
-//        prop.setProperty("hibernate.connection.password", "<your-password>");
-//        prop.setProperty("hibernate.connection.driver_class", "org.postgresql.Driver");
-//        prop.setProperty("show_sql", true); //If you wish to see the generated sql query
-//
-//    SessionFactory sessionFactory = new Configuration().addProperties(prop).buildSessionFactory();
-//       Session session = sessionFactory.openSession();
-//    session.beginTransaction();
-//            Customer user = new Customer(); //Note customer is a POJO maps to the customer table in the database.
-//
-//    user.setName("test");
-//    user.setisActive(true);
-//    session.save(user);
-//    session.getTransaction().commit();
-//    session.close();
