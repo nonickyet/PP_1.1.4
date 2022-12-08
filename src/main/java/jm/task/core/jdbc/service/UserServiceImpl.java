@@ -9,10 +9,10 @@ import java.util.List;
 
 public class UserServiceImpl extends jm.task.core.jdbc.util.Util implements UserService {
     //Hibernate
-    private final UserDao userDao = new UserDaoHibernateImpl();
+    //private final UserDao userDao = new UserDaoHibernateImpl();
 
     //JDBC
-    //private final UserDao userDao = new UserDaoJDBCImpl();
+    private final UserDao userDao = new UserDaoJDBCImpl();
     public void createUsersTable() {
         userDao.createUsersTable();
     }
